@@ -6,6 +6,7 @@ public class PlayerMovement : MonoBehaviour
 {
     [Header("Movement")]
     public float moveSpeed;
+    public float sprintSpeed;
     public float groundDrag;
 
     public float jumpForce;
@@ -15,11 +16,13 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Keybinds")]
     public KeyCode jumpKey = KeyCode.Space;
+    public KeyCode sprintKey = KeyCode.LeftShift;
 
     [Header("Ground Check")]
     public float playerHeight;
     public LayerMask whatIsGround;
     bool grounded;
+    bool isSprinting;
 
     public Transform orientation;
 
@@ -34,6 +37,8 @@ public class PlayerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
+
+        readyToJump = true;
     }
 
     private void Update()
@@ -56,7 +61,7 @@ public class PlayerMovement : MonoBehaviour
 
         float speed = rb.velocity.magnitude;
 
-        Debug.Log("Speed: " + speed);
+        Debug.Log("Speed: " + speed + " isSprinting? " + isSprinting);
     }
 
     private void MyInput()
@@ -67,18 +72,28 @@ public class PlayerMovement : MonoBehaviour
         if(Input.GetKey(jumpKey) && readyToJump && grounded)
         {
             readyToJump = false;
-
             Jump();
-
             Invoke(nameof(ResetJump), jumpCooldown);
         }
-    }
+
+        if (Input.GetKeyDown(sprintKey))
+        {
+        isSprinting = true;
+        }
+
+        if (Input.GetKeyUp(sprintKey))
+        {
+        isSprinting = false;
+        }
+}
 
     private void MovePlayer()
     {
         moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
 
-        if(grounded)
+        if (isSprinting && grounded)
+            rb.AddForce(moveDirection.normalized * sprintSpeed * 10f, ForceMode.Force);
+        else if(grounded)
             rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
         else if(!grounded)
             rb.AddForce(moveDirection.normalized * moveSpeed * 10f * airMultiplier, ForceMode.Force);
@@ -87,9 +102,11 @@ public class PlayerMovement : MonoBehaviour
     private void SpeedControl(){
         Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
 
-        if(flatVel.magnitude > moveSpeed)
+        float currentMaxSpeed = isSprinting ? sprintSpeed : moveSpeed;
+
+        if(flatVel.magnitude > currentMaxSpeed)
         {
-            Vector3 limitedVel = flatVel.normalized * moveSpeed;
+            Vector3 limitedVel = flatVel.normalized * currentMaxSpeed;
             rb.velocity = new Vector3(limitedVel.x, rb.velocity.y, limitedVel.z);
         }
     }
