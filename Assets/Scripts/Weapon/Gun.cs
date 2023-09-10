@@ -11,10 +11,11 @@ public class Gun : MonoBehaviour
     private Recoil recoilScript;
     private AudioSource audioSrc;
     public AudioClip hitClip;
+    public Camera playerCam;
+    public GameObject bulletHole;
     
     private float _timeSinceLastShot = 0;
     public GameObject bulletPrefab;
-    public GameObject RecoilObj;
     
     private void Start()
     {
@@ -32,14 +33,32 @@ public class Gun : MonoBehaviour
             if (CanShoot())
             {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                RaycastHit hit;
                 
                 audioSrc.PlayOneShot(hitClip);
                 recoilScript.RecoilFire();
                 
-                var bullet = Instantiate(bulletPrefab, muzzle.position, bulletPrefab.transform.rotation);
-                bullet.GetComponent<Rigidbody>().AddForce(muzzle.forward * data.bulletSpeed, ForceMode.Impulse);
-
+                //var bullet = Instantiate(bulletPrefab, muzzle.position, bulletPrefab.transform.rotation);
+                
+                Vector3 origin = playerCam.transform.position;
+                
+                Vector3 screenCenter = playerCam.ViewportToWorldPoint (new Vector3(0.5f, 0.5f, 0.0f));
+                
+                RaycastHit hit;
+                if (Physics.Raycast(ray, out hit, float.PositiveInfinity))
+                {
+                    // bullet.GetComponent<Rigidbody>().transform.LookAt(screenCenter);
+                    // bullet.GetComponent<Rigidbody>().AddForce(screenCenter * data.bulletSpeed, ForceMode.Impulse);
+                    Instantiate(bulletHole, hit.point + (hit.normal * 0.1f),
+                        Quaternion.FromToRotation(Vector3.up, hit.normal));
+                }
+                
+                // Vector3 screenCenter = playerCam.ViewportToWorldPoint (new Vector3(0.5f, 0.5f, 0.0f));
+                // bullet.GetComponent<Rigidbody>().transform.LookAt(screenCenter);
+                // bullet.GetComponent<Rigidbody>().AddForce(muzzle.transform.forward * data.bulletSpeed, ForceMode.Impulse);
+                
+                // easter eggas 
+                //bullet.GetComponent<Rigidbody>().AddForce(bullet.transform.forward * data.bulletSpeed, ForceMode.Impulse);
+                
                 data.currentAmmo--;
                 _timeSinceLastShot = 0;
             }
