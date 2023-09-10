@@ -9,6 +9,7 @@ public class Gun : MonoBehaviour
     [SerializeField] private Transform muzzle;
     public GunData data;
     private float _timeSinceLastShot = 0;
+    public GameObject bulletPrefab;
     
     private void Start()
     {
@@ -25,11 +26,9 @@ public class Gun : MonoBehaviour
             {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hit;
-
-                if (Physics.Raycast(ray, out hit, 100))
-                {
-                    Debug.Log("shot object" + hit.transform.name);
-                }
+                
+                var bullet = Instantiate(bulletPrefab, muzzle.position, bulletPrefab.transform.rotation);
+                bullet.GetComponent<Rigidbody>().AddForce(muzzle.forward * data.bulletSpeed, ForceMode.Impulse);
 
                 data.currentAmmo--;
                 _timeSinceLastShot = 0;
@@ -44,7 +43,6 @@ public class Gun : MonoBehaviour
         {
             Debug.DrawRay(muzzle.position, muzzle.forward * 100, Color.green);
         }
-
         _timeSinceLastShot += Time.deltaTime;
     }
 }

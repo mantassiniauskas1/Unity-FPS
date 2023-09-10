@@ -9,6 +9,7 @@ public class GunData : MonoBehaviour
     [Header("Shooting")]
     public float damage;
     public int currentAmmo;
+    public float bulletSpeed;
     
     [Header("Reloading")]
     public int magSize;

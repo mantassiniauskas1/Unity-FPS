@@ -277,7 +277,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Pistol
   damage: 35
-  currentAmmo: 12
+  currentAmmo: 500
+  bulletSpeed: 60
   magSize: 24
   fireRate: 352
   reloadTime: 2.2
@@ -296,6 +297,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   muzzle: {fileID: 2037129781}
   data: {fileID: 19471400}
+  bulletPrefab: {fileID: 1343600256046580012, guid: 640a73f53b6b90540b7ed5e99a819bf1, type: 3}
 --- !u!1001 &64663983
 PrefabInstance:
   m_ObjectHideFlags: 0
