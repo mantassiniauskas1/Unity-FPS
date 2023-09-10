@@ -83,8 +83,6 @@ public class PlayerMovement : MonoBehaviour
         MovePlayer();
 
         float speed = rb.velocity.magnitude;
-
-        Debug.Log("Speed: " + speed + " isSprinting? " + isSprinting + " Stamina " + stamina);
     }
 
     private void MyInput()
