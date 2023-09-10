@@ -8,11 +8,16 @@ public class PlayerMovement : MonoBehaviour
     public float moveSpeed;
     public float sprintSpeed;
     public float groundDrag;
-
     public float jumpForce;
     public float jumpCooldown;
     public float airMultiplier;
-    bool readyToJump;
+
+    [Header("Stamina")]
+    public float staminaMax = 100f;
+    public float sprintCostPerSecond = 10f;
+    public float sprintRegenRate = 20f;
+
+    private float stamina;
 
     [Header("Keybinds")]
     public KeyCode jumpKey = KeyCode.Space;
@@ -21,6 +26,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("Ground Check")]
     public float playerHeight;
     public LayerMask whatIsGround;
+    bool readyToJump;
     bool grounded;
     bool isSprinting;
 
@@ -39,6 +45,7 @@ public class PlayerMovement : MonoBehaviour
         rb.freezeRotation = true;
 
         readyToJump = true;
+        stamina = staminaMax;
     }
 
     private void Update()
@@ -53,6 +60,22 @@ public class PlayerMovement : MonoBehaviour
         else
             rb.drag = 0;
 
+        if (!isSprinting && stamina < staminaMax)
+            {
+                stamina += sprintRegenRate * Time.deltaTime;
+                stamina = Mathf.Clamp(stamina, 0f, staminaMax);
+            }
+        
+        if (isSprinting)
+        {
+            stamina -= sprintCostPerSecond * Time.deltaTime;
+            if (stamina <= 0f)
+            {
+                isSprinting = false;
+            }
+        }
+
+
     }
 
     private void FixedUpdate()
@@ -61,7 +84,7 @@ public class PlayerMovement : MonoBehaviour
 
         float speed = rb.velocity.magnitude;
 
-        Debug.Log("Speed: " + speed + " isSprinting? " + isSprinting);
+        Debug.Log("Speed: " + speed + " isSprinting? " + isSprinting + " Stamina " + stamina);
     }
 
     private void MyInput()
@@ -76,14 +99,14 @@ public class PlayerMovement : MonoBehaviour
             Invoke(nameof(ResetJump), jumpCooldown);
         }
 
-        if (Input.GetKeyDown(sprintKey))
+        if (Input.GetKeyDown(sprintKey) && stamina > 0f)
         {
-        isSprinting = true;
+            isSprinting = true;
         }
 
-        if (Input.GetKeyUp(sprintKey))
+        if (Input.GetKeyUp(sprintKey) || stamina <= 0f)
         {
-        isSprinting = false;
+            isSprinting = false;
         }
 }
 
