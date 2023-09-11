@@ -1142,7 +1142,7 @@ GameObject:
   - component: {fileID: 723141094}
   m_Layer: 6
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1553,6 +1553,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   smooth: 8
   swayMultiplier: 5
+  walkSwayAmount: 0.01
+  walkSwaySpeed: 7.66
+  sprintSwayAmount: 0.03
+  sprintSwaySpeed: 10.27
 --- !u!1001 &1102226901
 PrefabInstance:
   m_ObjectHideFlags: 0
