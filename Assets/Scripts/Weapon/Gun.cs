@@ -48,17 +48,18 @@ public class Gun : MonoBehaviour
                 Vector3 screenCenter = playerCam.ViewportToWorldPoint (new Vector3(0.5f, 0.5f, 0.0f));
                 
                 RaycastHit hit;
-                if (Physics.Raycast(ray, out hit, float.PositiveInfinity))
-                {
-                    // bullet.GetComponent<Rigidbody>().transform.LookAt(screenCenter);
-                    // bullet.GetComponent<Rigidbody>().AddForce(screenCenter * data.bulletSpeed, ForceMode.Impulse);
-                    var bulletHole = Instantiate(impactEffect, hit.point, Quaternion.LookRotation(hit.normal));
-                    if (hit.rigidbody)
-                    {
-                        hit.rigidbody.AddForce(-hit.normal * data.impactForce);
-                    }
-                    
-                }
+            if (Physics.Raycast(ray, out hit, float.PositiveInfinity))
+            {
+             var bulletHole = Instantiate(impactEffect, hit.point, Quaternion.LookRotation(hit.normal));
+
+             // Parent the bullet hole to the object that was hit
+             bulletHole.transform.parent = hit.transform;
+
+            if (hit.rigidbody)
+            {
+             hit.rigidbody.AddForce(-hit.normal * data.impactForce);
+            }
+            }
                 
                 // Vector3 screenCenter = playerCam.ViewportToWorldPoint (new Vector3(0.5f, 0.5f, 0.0f));
                 // bullet.GetComponent<Rigidbody>().transform.LookAt(screenCenter);

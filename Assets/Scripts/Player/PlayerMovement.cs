@@ -1,30 +1,27 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    [Header("Movement")]
-    public float moveSpeed;
+    [Header("Movement")] public float moveSpeed;
     public float sprintSpeed;
     public float groundDrag;
     public float jumpForce;
     public float jumpCooldown;
     public float airMultiplier;
 
-    [Header("Stamina")]
-    public float staminaMax = 100f;
+    [Header("Stamina")] public float staminaMax = 100f;
     public float sprintCostPerSecond = 10f;
     public float sprintRegenRate = 20f;
 
     private float stamina;
 
-    [Header("Keybinds")]
-    public KeyCode jumpKey = KeyCode.Space;
+    [Header("Keybinds")] public KeyCode jumpKey = KeyCode.Space;
     public KeyCode sprintKey = KeyCode.LeftShift;
 
-    [Header("Ground Check")]
-    public float playerHeight;
+    [Header("Ground Check")] public float playerHeight;
     public LayerMask whatIsGround;
     bool readyToJump;
     bool grounded;
@@ -55,17 +52,17 @@ public class PlayerMovement : MonoBehaviour
         MyInput();
         SpeedControl();
 
-        if(grounded)
+        if (grounded)
             rb.drag = groundDrag;
         else
             rb.drag = 0;
 
         if (!isSprinting && stamina < staminaMax)
-            {
-                stamina += sprintRegenRate * Time.deltaTime;
-                stamina = Mathf.Clamp(stamina, 0f, staminaMax);
-            }
-        
+        {
+            stamina += sprintRegenRate * Time.deltaTime;
+            stamina = Mathf.Clamp(stamina, 0f, staminaMax);
+        }
+
         if (isSprinting)
         {
             stamina -= sprintCostPerSecond * Time.deltaTime;
@@ -88,9 +85,9 @@ public class PlayerMovement : MonoBehaviour
     private void MyInput()
     {
         horizontalInput = Input.GetAxisRaw("Horizontal");
-        verticalInput = Input. GetAxisRaw("Vertical");
+        verticalInput = Input.GetAxisRaw("Vertical");
 
-        if(Input.GetKey(jumpKey) && readyToJump && grounded)
+        if (Input.GetKey(jumpKey) && readyToJump && grounded)
         {
             readyToJump = false;
             Jump();
@@ -106,7 +103,7 @@ public class PlayerMovement : MonoBehaviour
         {
             isSprinting = false;
         }
-}
+    }
 
     private void MovePlayer()
     {
@@ -114,18 +111,19 @@ public class PlayerMovement : MonoBehaviour
 
         if (isSprinting && grounded)
             rb.AddForce(moveDirection.normalized * sprintSpeed * 10f, ForceMode.Force);
-        else if(grounded)
+        else if (grounded)
             rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
-        else if(!grounded)
+        else if (!grounded)
             rb.AddForce(moveDirection.normalized * moveSpeed * 10f * airMultiplier, ForceMode.Force);
     }
 
-    private void SpeedControl(){
+    private void SpeedControl()
+    {
         Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
 
         float currentMaxSpeed = isSprinting ? sprintSpeed : moveSpeed;
 
-        if(flatVel.magnitude > currentMaxSpeed)
+        if (flatVel.magnitude > currentMaxSpeed)
         {
             Vector3 limitedVel = flatVel.normalized * currentMaxSpeed;
             rb.velocity = new Vector3(limitedVel.x, rb.velocity.y, limitedVel.z);
@@ -134,13 +132,18 @@ public class PlayerMovement : MonoBehaviour
 
     private void Jump()
     {
-       rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z) ;
+        rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
 
-       rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+        rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
     }
 
     private void ResetJump()
     {
         readyToJump = true;
+    }
+
+    public float GetStamina()
+    {
+        return stamina;
     }
 }
