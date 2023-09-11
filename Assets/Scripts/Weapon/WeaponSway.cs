@@ -47,7 +47,7 @@ public class WeaponSway : MonoBehaviour
 
         float playerSpeed = rb.velocity.magnitude;
 
-        if (horizontalInput != 0f || verticalInput != 0f && playerSpeed < 8f)
+        if (playerSpeed < 8f && playerSpeed > 1f)
         {
             swayTime += Time.deltaTime * walkSwaySpeed;
             float swayOffset = Mathf.Sin(swayTime) * walkSwayAmount;
@@ -57,7 +57,7 @@ public class WeaponSway : MonoBehaviour
             transform.localRotation = transform.localRotation * swayRotation;
         }
         Debug.Log(playerSpeed);
-        if (horizontalInput != 0f || verticalInput != 0f && playerSpeed > 8f)
+        if (playerSpeed > 8f)
         {
             swayTime += Time.deltaTime * sprintSwaySpeed;
             float swayOffset = Mathf.Sin(swayTime) * sprintSwayAmount;
