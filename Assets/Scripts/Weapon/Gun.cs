@@ -13,6 +13,8 @@ public class Gun : MonoBehaviour
     public AudioClip hitClip;
     public Camera playerCam;
     public GameObject bulletHole;
+    public ParticleSystem muzzleFlash;
+    public GameObject impactEffect;
     
     private float _timeSinceLastShot = 0;
     public GameObject bulletPrefab;
@@ -37,7 +39,9 @@ public class Gun : MonoBehaviour
                 audioSrc.PlayOneShot(hitClip);
                 recoilScript.RecoilFire();
                 
-                //var bullet = Instantiate(bulletPrefab, muzzle.position, bulletPrefab.transform.rotation);
+                muzzleFlash.Play();
+                
+                //var bullet = Instantiate(bulletPrefab, muzzle.position, GameObject.Find("CameraHolder/PlayerCam/CameraRot/CameraRecoil/WeaponHolder").transform.rotation);
                 
                 Vector3 origin = playerCam.transform.position;
                 
@@ -48,8 +52,12 @@ public class Gun : MonoBehaviour
                 {
                     // bullet.GetComponent<Rigidbody>().transform.LookAt(screenCenter);
                     // bullet.GetComponent<Rigidbody>().AddForce(screenCenter * data.bulletSpeed, ForceMode.Impulse);
-                    Instantiate(bulletHole, hit.point + (hit.normal * 0.1f),
-                        Quaternion.FromToRotation(Vector3.up, hit.normal));
+                    var bulletHole = Instantiate(impactEffect, hit.point, Quaternion.LookRotation(hit.normal));
+                    if (hit.rigidbody)
+                    {
+                        hit.rigidbody.AddForce(-hit.normal * data.impactForce);
+                    }
+                    
                 }
                 
                 // Vector3 screenCenter = playerCam.ViewportToWorldPoint (new Vector3(0.5f, 0.5f, 0.0f));
